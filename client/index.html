@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Beam — send it to your other device</title>
+<meta name="description" content="Send files and text straight from one of your devices to another. No account, no cloud storage, no app." />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📡</text></svg>" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="topline">
+    <div class="mark" aria-hidden="true">
+      <span class="mark-dot"></span>
+      <span class="mark-dot"></span>
+    </div>
+    <span class="wordmark">Beam</span>
+  </header>
+
+  <!-- ================= PAIRING SCREEN ================= -->
+  <main id="screen-pair" class="screen">
+    <p class="lede">Send files and text straight from this device to your other one. Nothing passes through a server — it goes device to device.</p>
+
+    <section class="pair-panel">
+      <div class="pair-col pair-col--host">
+        <h2 class="panel-title">This device's code</h2>
+        <div class="code-display" id="room-code" aria-live="polite">····</div>
+        <div class="qr-box" id="qr-box" aria-label="QR code to pair a second device"></div>
+        <p class="panel-hint">Scan this with your other device's camera, or type the code in there.</p>
+      </div>
+
+      <div class="pair-divider" aria-hidden="true">
+        <span>or</span>
+      </div>
+
+      <div class="pair-col pair-col--join">
+        <h2 class="panel-title">Enter a code</h2>
+        <form id="join-form" class="join-form" autocomplete="off">
+          <input
+            id="join-input"
+            class="join-input"
+            type="text"
+            inputmode="numeric"
+            pattern="[0-9]*"
+            maxlength="4"
+            placeholder="0000"
+            aria-label="Enter the 4-digit code shown on the other device"
+          />
+          <button type="submit" class="btn btn-primary">Connect</button>
+        </form>
+        <p class="panel-hint" id="join-status"></p>
+      </div>
+    </section>
+  </main>
+
+  <!-- ================= CONNECTED SCREEN ================= -->
+  <main id="screen-connected" class="screen screen--hidden">
+    <div class="status-row">
+      <span class="status-dot"></span>
+      <span id="peer-status">Connected</span>
+    </div>
+
+    <section
+      id="dropzone"
+      class="dropzone"
+      tabindex="0"
+      role="button"
+      aria-label="Drop a file here, or click to choose one"
+    >
+      <div class="dropzone-inner">
+        <p class="dropzone-title">Drop a file here</p>
+        <p class="dropzone-sub">or click to choose one — sent directly, no size upload to any server</p>
+      </div>
+      <input type="file" id="file-input" multiple hidden />
+    </section>
+
+    <form id="text-form" class="text-form">
+      <textarea
+        id="text-input"
+        class="text-input"
+        placeholder="Paste or type text to send instead"
+        rows="2"
+      ></textarea>
+      <button type="submit" class="btn btn-secondary">Send text</button>
+    </form>
+
+    <section class="log" id="transfer-log" aria-live="polite"></section>
+  </main>
+
+  <footer class="foot">
+    <span id="foot-note">Files transfer directly between your devices over a peer-to-peer connection.</span>
+  </footer>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
