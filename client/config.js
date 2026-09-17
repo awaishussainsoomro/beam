@@ -6,5 +6,5 @@
 // You can also override it per-visit with ?server=wss://... in the URL,
 // which is handy while testing without editing this file.
 const BEAM_CONFIG = {
-  signalingUrl: "ws://localhost:8080",
+  signalingUrl: "ws://beam-production-bbf8.up.railway.app",
 };
