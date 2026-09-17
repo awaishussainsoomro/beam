@@ -4,7 +4,7 @@ Send a file or a chunk of text from your laptop to your phone (or back)
 without going through WhatsApp, email, or a cloud drive.
 
 Open the page on both devices, one shows a 4-digit code (and a QR code),
-you enter that code (or scan it) on the other — the two devices then
+you enter that code (or scan it) on the other the two devices then
 talk directly to each other over WebRTC. The file never touches the
 server; the server only helps the two devices find each other.
 
@@ -19,7 +19,7 @@ beam/
 1. Both devices open the client page and connect to the signaling server.
 2. Device A gets a code, e.g. `4821`, and shows it + a QR code.
 3. Device B enters `4821` (or scans the QR).
-4. The server introduces them and gets out of the way — a direct
+4. The server introduces them and gets out of the way a direct
    peer-to-peer connection (WebRTC) forms between the two browsers.
 5. Files and text now transfer straight from device to device.
 
@@ -38,7 +38,7 @@ npm start
 This starts the signaling server at `ws://localhost:8080`.
 
 Now open `client/index.html` directly in your browser (or serve the
-`client` folder with any static server — e.g. `npx serve client`).
+`client` folder with any static server e.g. `npx serve client`).
 `client/config.js` already points at `ws://localhost:8080` by default,
 so it should just work. Open the page in two browser tabs (or two
 devices on the same WiFi, using your laptop's local IP instead of
@@ -94,7 +94,7 @@ const BEAM_CONFIG = {
 
 > **The one letter that matters most: `wss`, not `ws`.** A client page
 > served over `https://` (which every static host uses) is blocked by
-> the browser from opening a plain `ws://` connection — it throws a
+> the browser from opening a plain `ws://` connection it throws a
 > "Mixed Content" / `SecurityError` in the console and the room code
 > never appears. If that happens, this line is the first thing to
 > check.
@@ -108,7 +108,7 @@ const BEAM_CONFIG = {
 
 ## 4. Deploy the client (Vercel, from the same GitHub repo)
 
-The `client/` folder is plain HTML/CSS/JS — no build step. This
+The `client/` folder is plain HTML/CSS/JS, no build step. This
 project's client was deployed on [Vercel](https://vercel.com):
 
 1. At vercel.com, sign in with GitHub.
@@ -122,7 +122,7 @@ Every time you push a change to `client/` on GitHub (like updating
 `config.js`), Vercel redeploys automatically within a few seconds.
 
 Netlify's drag-and-drop (`app.netlify.com/drop`) or GitHub Pages work
-just as well if you'd rather not connect a Git repo — same static
+just as well if you'd rather not connect a Git repo, same static
 files, same result.
 
 Open your live URL on your laptop and your phone. That's the whole app.
@@ -157,7 +157,7 @@ app talks to it over `wss://`, which a browser tab visit won't show.
 - **Same rough network conditions**: works reliably on the same WiFi,
   and on most home/mobile networks thanks to STUN. A small number of
   strict corporate/carrier NATs may block the direct connection
-  entirely — the fix for that is a TURN relay server, deliberately
+  entirely the fix for that is a TURN relay server, deliberately
   left out of this first version to keep it simple and free to run.
 - **One file at a time**: multiple dropped files send sequentially,
   not in parallel. Simple and reliable; easy to parallelize later.
@@ -174,5 +174,5 @@ app talks to it over `wss://`, which a browser tab visit won't show.
   [Cloudflare Calls](https://developers.cloudflare.com/calls/)) for the
   networks where direct connection fails.
 - A "pro" tier: bigger files, persistent short links, cross-network
-  relay fallback — the free peer-to-peer path stays free forever.
+  relay fallback the free peer-to-peer path stays free forever.
 - PWA manifest so it installs to a phone's home screen like an app.
