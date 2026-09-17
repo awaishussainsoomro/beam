@@ -46,27 +46,39 @@ devices on the same WiFi, using your laptop's local IP instead of
 
 ---
 
-## 2. Deploy the signaling server (Render, free tier)
+## 2. Deploy the signaling server (Railway, free, no card required)
 
-You can use any Node host (Railway, Fly.io, a VPS) — these steps are
-for [Render](https://render.com) since it has a straightforward free tier.
+You can use any Node host that keeps a process running continuously
+(Railway, Render, Fly.io, a VPS) — this project's own server was
+deployed on [Railway](https://railway.com), since it doesn't require a
+card for a verified GitHub account, unlike Render.
 
-1. Push this project to a GitHub repo (or just the `server/` folder).
-2. In Render: **New +** → **Web Service** → connect your repo.
-3. Set:
-   - **Root directory**: `server`
-   - **Build command**: `npm install`
-   - **Start command**: `npm start`
-   - **Instance type**: Free
-4. Deploy. Render will give you a URL like:
-   `https://beam-signaling.onrender.com`
-5. Your WebSocket URL is the same thing with `wss://` instead of
+1. Push this project to a GitHub repo (the whole `beam` folder is fine).
+2. At [railway.com](https://railway.com), sign in with **"Continue with
+   GitHub"** — signing in this way is what lets Railway verify you
+   without asking for a card.
+3. **New Project** → **Deploy from GitHub repo** → select your repo.
+4. Click the new service → **Settings**, and set:
+   - **Root Directory**: `server`
+   - **Build Command**: `npm install`
+   - **Start Command**: `npm start`
+5. Still in **Settings**, under **Networking**, click **Generate
+   Domain**. You'll get a URL like:
+   `https://beam-production-xxxx.up.railway.app`
+6. Your WebSocket URL is the same thing with `wss://` instead of
    `https://`:
-   `wss://beam-signaling.onrender.com`
+   `wss://beam-production-xxxx.up.railway.app`
 
-> Free-tier services on Render spin down when idle and take a few
-> seconds to wake up on the next connection — expect a short delay on
-> the first pairing after inactivity. Fine for personal use.
+Visiting that URL in a normal browser tab will just show the plain
+text `beam signaling server is running` — that's expected. Browsers
+only render `http(s)` pages; the app itself connects to it over `wss://`,
+which isn't something you can "view" directly.
+
+> If your GitHub account is brand new or has little activity, Railway
+> may place you on a "limited trial" with restricted network access
+> instead of a full trial. If that happens, the $5/month Hobby plan
+> (which does need a card) is the fallback — but most established
+> GitHub accounts get the full trial with no card at all.
 
 ---
 
@@ -76,28 +88,69 @@ Edit `client/config.js`:
 
 ```js
 const BEAM_CONFIG = {
-  signalingUrl: "wss://beam-signaling.onrender.com",
+  signalingUrl: "wss://beam-production-xxxx.up.railway.app",
 };
 ```
 
----
-
-## 4. Deploy the client (any static host)
-
-The `client/` folder is plain HTML/CSS/JS — drag-and-drop it onto any
-static host.
-
-**Netlify (easiest):**
-1. Go to [app.netlify.com/drop](https://app.netlify.com/drop)
-2. Drag the `client` folder in
-3. You'll get a URL like `https://beam-yourname.netlify.app`
-
-**Vercel / GitHub Pages** work the same way — no build step needed,
-it's just static files.
-
-Open that URL on your laptop and your phone. That's the whole app.
+> **The one letter that matters most: `wss`, not `ws`.** A client page
+> served over `https://` (which every static host uses) is blocked by
+> the browser from opening a plain `ws://` connection — it throws a
+> "Mixed Content" / `SecurityError` in the console and the room code
+> never appears. If that happens, this line is the first thing to
+> check.
+>
+> Also remember: if you deploy the client from GitHub (Vercel, or
+> Render/Netlify's Git-based flow), editing `config.js` on your
+> computer does nothing until you commit and push that change to the
+> repo — the host redeploys from GitHub, not your local files.
 
 ---
+
+## 4. Deploy the client (Vercel, from the same GitHub repo)
+
+The `client/` folder is plain HTML/CSS/JS — no build step. This
+project's client was deployed on [Vercel](https://vercel.com):
+
+1. At vercel.com, sign in with GitHub.
+2. **Add New** → **Project** → select your `beam` repo.
+3. Set **Root Directory** to `client`.
+4. Set **Framework Preset** to **"Other"**, leave **Build Command**
+   empty.
+5. **Deploy**. You'll get a URL like `https://beam-yourname.vercel.app`.
+
+Every time you push a change to `client/` on GitHub (like updating
+`config.js`), Vercel redeploys automatically within a few seconds.
+
+Netlify's drag-and-drop (`app.netlify.com/drop`) or GitHub Pages work
+just as well if you'd rather not connect a Git repo — same static
+files, same result.
+
+Open your live URL on your laptop and your phone. That's the whole app.
+
+---
+
+## Troubleshooting
+
+**Terminal shows the server hosting a new room instead of joining the
+code you typed** (e.g. `left room 5778` immediately followed by
+`joined room 6281 role: host`): this was a bug in an earlier version
+of `app.js`, now fixed — entering a code closed the old connection but
+never told the *new* one to join, so it silently defaulted back to
+hosting. If you're on an older copy of the file, replace `client/app.js`
+with the current version.
+
+**Room code never appears, console shows a Mixed Content /
+SecurityError**: `config.js` is pointing at `ws://` instead of
+`wss://`. See the callout in step 3 above.
+
+**Deployed the client but it still points at `localhost`**: the edit
+to `config.js` was made locally but never pushed to GitHub, so
+Vercel/Render's Git-based deploy is still serving the old version.
+Commit and push the change, or edit the file directly on GitHub.
+
+**Visiting the Railway server URL just shows plain text**: that's
+correct — it's confirmation the server is running, not an error. The
+app talks to it over `wss://`, which a browser tab visit won't show.
 
 ## Known limits (v1, on purpose)
 
